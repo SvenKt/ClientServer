@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1456422922 source:/home/sven/Desktop/Client/Client/graphInt.cpp
+	"graphInt.h"
+	<iostream>
+
+1456410868 /home/sven/Desktop/Client/Client/graphInt.h
+
+1456421155 source:/home/sven/Desktop/Client/Client/Wissensbereiche.cpp
+	"Wissensbereiche.h"
+
+1456392326 /home/sven/Desktop/Client/Client/Wissensbereiche.h
+	<string>
+
