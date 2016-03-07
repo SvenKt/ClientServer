@@ -104,6 +104,8 @@ void Wissensbereiche::entfernen(){
               EXEC SQL END DECLARE SECTION;
               del_id = id;
 
+
+              EXEC SQL DELETE FROM fragen WHERE w_id = :del_id;
               EXEC SQL DELETE FROM wissensbereich WHERE w_id=:del_id;
               EXEC SQL COMMIT;
             }

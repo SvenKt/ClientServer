@@ -6,6 +6,7 @@
 #include <string>
 #include "Wissensbereiche.h"
 #include "Fragen.h"
+#include "Highscore.h"
 
 using namespace std;
 
@@ -14,6 +15,7 @@ int main()
 //graphInt gui;
 Wissensbereiche wb;
 Fragen fr;
+Highscore hs;
 
     EXEC SQL BEGIN DECLARE SECTION;
         char dbname[1024];
@@ -44,7 +46,8 @@ Fragen fr;
                 wb.menu(); break;
 		case '2': cout << "Fragen werden geladen..." << endl;  antwort = '1';
                 fr.menu(); break;
-		case '3': cout << "Highscore wird geladen..." << endl;  antwort = '1'; break;
+		case '3': cout << "Highscore wird geladen..." << endl;  antwort = '1';
+                hs.menu(); break;
 		default: cout << "Fehler: falsche Eingabe. Bitte erneut eingeben!" << endl;  antwort = '1';
 		}
 	}

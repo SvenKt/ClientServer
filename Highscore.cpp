@@ -61,7 +61,6 @@ void Highscore::update(int temp_id){
         istringstream ss(temp_score);
         ss >> new_score;
 
-
         EXEC SQL BEGIN DECLARE SECTION;
         int sql_id;
         const char*  sql_new_name;
@@ -71,11 +70,13 @@ void Highscore::update(int temp_id){
         sql_new_name = new_name.c_str();
         sql_new_score = new_score;
 
+
          if(new_name != ""){
             EXEC SQL UPDATE highscore SET h_name = :sql_new_name WHERE h_id = :sql_id;
         }
-        if (new_score){
-            EXEC SQL UPDATE score SET score = :sql_new_score WHERE h_id = :sql_id;
+        if (new_score >= 0){
+
+            EXEC SQL UPDATE highscore SET score = :sql_new_score WHERE h_id = :sql_id;
         }
 
         EXEC SQL COMMIT;
@@ -139,7 +140,6 @@ void Highscore::listAll(){
 
 void Highscore::menu(){
     string antwort_h = "1";
-
 
     while (antwort_h[0] != '0'){
         listAll();
