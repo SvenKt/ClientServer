@@ -14,7 +14,7 @@ public:
 	void menu();
 	string getName(){ return sql_name; };
 	string getBeschreibung(){ return sql_beschreibung; };
-	void read(int p_id);
+	bool read(int p_id);
 	void createUpdate();
 	void update(int temp_id);
 	void entfernen();

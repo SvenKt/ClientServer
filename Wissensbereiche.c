@@ -55,7 +55,7 @@ void Wissensbereiche::setWissensbereich(const char* new_name,const char* new_bes
 
 };
 
-void Wissensbereiche::read(int p_id) {
+bool Wissensbereiche::read(int p_id) {
 
 	/* exec sql begin declare section */
 	 
@@ -84,7 +84,15 @@ void Wissensbereiche::read(int p_id) {
 #line 33 "Wissensbereiche.pgc"
 
 
-	cout << "\n" << p_id << "\t" << name << "\t" << beschreibung << "\t\n" << endl;
+    if (sqlca.sqlcode == 100){
+        cout << "Fehler, keine solche ID vorhanden" << endl;
+        return false;
+    } else{
+    	cout << "\n" << p_id << "\t" << name << "\t" << beschreibung << "\t\n" << endl;
+        return true;
+    }
+
+
 };
 
 void Wissensbereiche::update(int temp_id){
@@ -92,81 +100,103 @@ void Wissensbereiche::update(int temp_id){
     string new_name;
     string new_desc;
 
-    read(temp_id);
+    if (read(temp_id)){
+        cout << "Geben Sie den neuen Namen ein: "<< endl;
+        getline(cin,new_name);
 
-    cout << "Geben Sie den neuen Namen ein: "<< endl;
-    getline(cin,new_name);
 
-    cout << "Geben Sie die neue Beschreibung ein: "<< endl;
-    getline(cin, new_desc);
 
-	/* exec sql begin declare section */
-	 
-	   
-	  
-	
-#line 52 "Wissensbereiche.pgc"
+        cout << "Geben Sie die neue Beschreibung ein: "<< endl;
+        getline(cin, new_desc);
+
+
+
+
+        /* exec sql begin declare section */
+         
+           
+          
+        
+#line 64 "Wissensbereiche.pgc"
  int sql_id ;
  
-#line 53 "Wissensbereiche.pgc"
+#line 65 "Wissensbereiche.pgc"
  const char * sql_new_name ;
  
-#line 54 "Wissensbereiche.pgc"
+#line 66 "Wissensbereiche.pgc"
  const char * sql_new_beschreibung ;
 /* exec sql end declare section */
-#line 55 "Wissensbereiche.pgc"
+#line 67 "Wissensbereiche.pgc"
 
 
-	sql_id = temp_id;
-	sql_new_name = new_name.c_str();
-	sql_new_beschreibung = new_desc.c_str();
-	{ ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "update wissensbereich set w_name = $1  , w_beschreibung = $2  where w_id = $3 ", 
+        sql_id = temp_id;
+        sql_new_name = new_name.c_str();
+        sql_new_beschreibung = new_desc.c_str();
+
+         if(new_name != ""){
+            { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "update wissensbereich set w_name = $1  where w_id = $2 ", 
 	ECPGt_char,&(sql_new_name),(long)0,(long)1,(1)*sizeof(char), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, 
+	ECPGt_int,&(sql_id),(long)1,(long)1,sizeof(int), 
+	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EOIT, ECPGt_EORT);}
+#line 74 "Wissensbereiche.pgc"
+
+        }
+        if (new_desc != ""){
+            { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "update wissensbereich set w_beschreibung = $1  where w_id = $2 ", 
 	ECPGt_char,&(sql_new_beschreibung),(long)0,(long)1,(1)*sizeof(char), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, 
 	ECPGt_int,&(sql_id),(long)1,(long)1,sizeof(int), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EOIT, ECPGt_EORT);}
-#line 60 "Wissensbereiche.pgc"
+#line 77 "Wissensbereiche.pgc"
 
-	{ ECPGtrans(__LINE__, NULL, "commit");}
-#line 61 "Wissensbereiche.pgc"
+        }
 
+        { ECPGtrans(__LINE__, NULL, "commit");}
+#line 80 "Wissensbereiche.pgc"
 
+    }
 };
 
 void Wissensbereiche::entfernen(){
 	string temp;
-	cout << "Geben Sie die ID des zu entfernenden Wissensbereiches an: ";
-    getline(cin, temp);
-    istringstream ss(temp);
-    ss >> id;
-    cout << "Zu entfernender Wissensbereich:\t" << endl;
-    read(id);
+	while (temp[0] != '0'){
+        listAll();
+        cout << "\n\nWelchen Wissensbereich wollen Sie entfernen? \n(0)\tAbbrechen\n(<ID>)\t Entfernen\n";
+        getline(cin, temp);
+        istringstream ss(temp);
+        ss >> id;
+        if(id == 0){
+            break;
+        }
 
-    cout << "Wollen Sie diesen Wissensbereich wirklich entfernen?\n(1)\tJa\n(0)\tNein\n";
-    getline(cin, temp);
+        cout << "Zu entfernender Wissensbereich:\t" << endl;
+        if(read(id)){
+            cout << "Wollen Sie diesen Wissensbereich wirklich entfernen?\n(1)\tJa\n(0)\tNein\n";
+            getline(cin, temp);
 
-    if(temp == "1"){
-      /* exec sql begin declare section */
-             
-      
-#line 79 "Wissensbereiche.pgc"
+            if(temp == "1"){
+              /* exec sql begin declare section */
+                     
+              
+#line 103 "Wissensbereiche.pgc"
  int del_id ;
 /* exec sql end declare section */
-#line 80 "Wissensbereiche.pgc"
+#line 104 "Wissensbereiche.pgc"
 
-      del_id = id;
+              del_id = id;
 
-      { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "delete from wissensbereich where w_id = $1 ", 
+              { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "delete from wissensbereich where w_id = $1 ", 
 	ECPGt_int,&(del_id),(long)1,(long)1,sizeof(int), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EOIT, ECPGt_EORT);}
-#line 83 "Wissensbereiche.pgc"
+#line 107 "Wissensbereiche.pgc"
 
-      { ECPGtrans(__LINE__, NULL, "commit");}
-#line 84 "Wissensbereiche.pgc"
+              { ECPGtrans(__LINE__, NULL, "commit");}
+#line 108 "Wissensbereiche.pgc"
 
-    }
+            }
+        }
+	}
 
 };
 
@@ -178,32 +208,32 @@ void Wissensbereiche::listAll(){
 		 
 		 
 	
-#line 92 "Wissensbereiche.pgc"
+#line 118 "Wissensbereiche.pgc"
  char name [ 256 ] ;
  
-#line 93 "Wissensbereiche.pgc"
+#line 119 "Wissensbereiche.pgc"
  char beschr [ 256 ] ;
  
-#line 94 "Wissensbereiche.pgc"
+#line 120 "Wissensbereiche.pgc"
  long current_id ;
  
-#line 95 "Wissensbereiche.pgc"
+#line 121 "Wissensbereiche.pgc"
  int counter ;
 /* exec sql end declare section */
-#line 96 "Wissensbereiche.pgc"
+#line 122 "Wissensbereiche.pgc"
 
     cout << "ID\tName\tBeschreibung\n"<<endl;
 
 
     //select all wissensbereiche
     /* declare cur cursor for select w_name , w_beschreibung , w_id from wissensbereich order by w_id */
-#line 101 "Wissensbereiche.pgc"
+#line 127 "Wissensbereiche.pgc"
 
     { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "declare cur cursor for select w_name , w_beschreibung , w_id from wissensbereich order by w_id", ECPGt_EOIT, ECPGt_EORT);}
-#line 102 "Wissensbereiche.pgc"
+#line 128 "Wissensbereiche.pgc"
 
     /* exec sql whenever not found  break ; */
-#line 103 "Wissensbereiche.pgc"
+#line 129 "Wissensbereiche.pgc"
 
 
    while(1){
@@ -214,33 +244,40 @@ void Wissensbereiche::listAll(){
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, 
 	ECPGt_long,&(current_id),(long)1,(long)1,sizeof(long), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EORT);
-#line 106 "Wissensbereiche.pgc"
+#line 132 "Wissensbereiche.pgc"
 
 if (sqlca.sqlcode == ECPG_NOT_FOUND) break;}
-#line 106 "Wissensbereiche.pgc"
+#line 132 "Wissensbereiche.pgc"
 
     printf("%ld\t%s\t%s\n", current_id,name,beschr);
    }
 
     { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "close cur", ECPGt_EOIT, ECPGt_EORT);}
-#line 110 "Wissensbereiche.pgc"
+#line 136 "Wissensbereiche.pgc"
 
 }
 
 void Wissensbereiche::menu(){
     string antwort_wb = "1";
 
+
     while (antwort_wb[0] != '0'){
         listAll();
         cout << "\n\nWelche Aktion wollen Sie durchfuehren?\n(1)\tNeuen Wissensbereich eintragen\n(2)\tWissensbereich bearbeiten\n(3)\tWissensbereich entfernen\n(0)\tBeenden\n\n" <<endl;
         getline(cin,antwort_wb);
-        switch(antwort_wb[0]){
+
+        if(antwort_wb.length() < 2){
+            switch(antwort_wb[0]){
               case '1':
                    createWissensbereich();
               break;
                 case '2': createUpdate();break;
                 case '3': entfernen(); break;
                 case '0':break;
+                default : cout << "Fehlerhafte Eingabe" << endl;
+            }
+        } else {
+            cout << "Fehlerhafte Eingabe" << endl;
         }
     }
 }
@@ -260,12 +297,12 @@ string antwort_up = "1";
         listAll();
         cout << "\n\nWelchen Wissensbereich wollen Sie bearbeiten? \n(0)\tAbbrechen\n(<ID>)\t Bearbeiten\n" <<endl;
         getline(cin,antwort_up);
-        if(antwort_up[0] == '0') {
-            break;
-        }
-        istringstream ss(antwort_up);
-        ss >> id;
-        update(id);
+            if(antwort_up[0] == '0') {
+                break;
+            }
+            istringstream ss(antwort_up);
+            ss >> id;
+            update(id);
     }
 }
 
