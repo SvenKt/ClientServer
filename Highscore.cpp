@@ -51,6 +51,7 @@ void Highscore::update(int temp_id){
 
 
     if (read(temp_id)){
+         cout << "<Enter> für das Beibehalten der alten Werte" << endl;
         cout << "Geben Sie den neuen Namen ein: "<< endl;
         getline(cin,new_name);
 

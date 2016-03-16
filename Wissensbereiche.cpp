@@ -49,6 +49,7 @@ void Wissensbereiche::update(int temp_id){
     string new_desc;
 
     if (read(temp_id)){
+     cout << "<Enter> für das Beibehalten der alten Werte" << endl;
         cout << "Geben Sie den neuen Namen ein: "<< endl;
         getline(cin,new_name);
 

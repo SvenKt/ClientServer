@@ -101,6 +101,7 @@ void Wissensbereiche::update(int temp_id){
     string new_desc;
 
     if (read(temp_id)){
+     cout << "<Enter> für das Beibehalten der alten Werte" << endl;
         cout << "Geben Sie den neuen Namen ein: "<< endl;
         getline(cin,new_name);
 
@@ -117,16 +118,16 @@ void Wissensbereiche::update(int temp_id){
            
           
         
-#line 64 "Wissensbereiche.pgc"
+#line 65 "Wissensbereiche.pgc"
  int sql_id ;
  
-#line 65 "Wissensbereiche.pgc"
+#line 66 "Wissensbereiche.pgc"
  const char * sql_new_name ;
  
-#line 66 "Wissensbereiche.pgc"
+#line 67 "Wissensbereiche.pgc"
  const char * sql_new_beschreibung ;
 /* exec sql end declare section */
-#line 67 "Wissensbereiche.pgc"
+#line 68 "Wissensbereiche.pgc"
 
 
         sql_id = temp_id;
@@ -139,7 +140,7 @@ void Wissensbereiche::update(int temp_id){
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, 
 	ECPGt_int,&(sql_id),(long)1,(long)1,sizeof(int), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EOIT, ECPGt_EORT);}
-#line 74 "Wissensbereiche.pgc"
+#line 75 "Wissensbereiche.pgc"
 
         }
         if (new_desc != ""){
@@ -148,12 +149,12 @@ void Wissensbereiche::update(int temp_id){
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, 
 	ECPGt_int,&(sql_id),(long)1,(long)1,sizeof(int), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EOIT, ECPGt_EORT);}
-#line 77 "Wissensbereiche.pgc"
+#line 78 "Wissensbereiche.pgc"
 
         }
 
         { ECPGtrans(__LINE__, NULL, "commit");}
-#line 80 "Wissensbereiche.pgc"
+#line 81 "Wissensbereiche.pgc"
 
     }
 };
@@ -176,23 +177,54 @@ void Wissensbereiche::entfernen(){
             getline(cin, temp);
 
             if(temp == "1"){
+
+
+
               /* exec sql begin declare section */
                      
+                     
               
-#line 103 "Wissensbereiche.pgc"
+#line 107 "Wissensbereiche.pgc"
  int del_id ;
+ 
+#line 108 "Wissensbereiche.pgc"
+ int anzahl ;
 /* exec sql end declare section */
-#line 104 "Wissensbereiche.pgc"
+#line 109 "Wissensbereiche.pgc"
 
               del_id = id;
+
+              { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "select count ( f_id ) from fragen where w_id = $1 ", 
+	ECPGt_int,&(del_id),(long)1,(long)1,sizeof(int), 
+	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EOIT, 
+	ECPGt_int,&(anzahl),(long)1,(long)1,sizeof(int), 
+	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EORT);}
+#line 112 "Wissensbereiche.pgc"
+
+
+             if(anzahl > 0) {
+              cout << "Es befinden sich noch " << anzahl << " Fragen in diesem Wissensbereich. Diese werden auch entfernt. Fortfahren?\n(1)\tJa\n(0)\tNein" << endl;
+             getline(cin, temp);
+
+                if(temp == "1"){
+                    { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "delete from fragen where w_id = $1 ", 
+	ECPGt_int,&(del_id),(long)1,(long)1,sizeof(int), 
+	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EOIT, ECPGt_EORT);}
+#line 119 "Wissensbereiche.pgc"
+
+                } else {
+                    break;
+                }
+
+             }
 
               { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "delete from wissensbereich where w_id = $1 ", 
 	ECPGt_int,&(del_id),(long)1,(long)1,sizeof(int), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EOIT, ECPGt_EORT);}
-#line 107 "Wissensbereiche.pgc"
+#line 126 "Wissensbereiche.pgc"
 
               { ECPGtrans(__LINE__, NULL, "commit");}
-#line 108 "Wissensbereiche.pgc"
+#line 127 "Wissensbereiche.pgc"
 
             }
         }
@@ -208,32 +240,32 @@ void Wissensbereiche::listAll(){
 		 
 		 
 	
-#line 118 "Wissensbereiche.pgc"
+#line 137 "Wissensbereiche.pgc"
  char name [ 256 ] ;
  
-#line 119 "Wissensbereiche.pgc"
+#line 138 "Wissensbereiche.pgc"
  char beschr [ 256 ] ;
  
-#line 120 "Wissensbereiche.pgc"
+#line 139 "Wissensbereiche.pgc"
  long current_id ;
  
-#line 121 "Wissensbereiche.pgc"
+#line 140 "Wissensbereiche.pgc"
  int counter ;
 /* exec sql end declare section */
-#line 122 "Wissensbereiche.pgc"
+#line 141 "Wissensbereiche.pgc"
 
     cout << "ID\tName\tBeschreibung\n"<<endl;
 
 
     //select all wissensbereiche
     /* declare cur cursor for select w_name , w_beschreibung , w_id from wissensbereich order by w_id */
-#line 127 "Wissensbereiche.pgc"
+#line 146 "Wissensbereiche.pgc"
 
     { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "declare cur cursor for select w_name , w_beschreibung , w_id from wissensbereich order by w_id", ECPGt_EOIT, ECPGt_EORT);}
-#line 128 "Wissensbereiche.pgc"
+#line 147 "Wissensbereiche.pgc"
 
     /* exec sql whenever not found  break ; */
-#line 129 "Wissensbereiche.pgc"
+#line 148 "Wissensbereiche.pgc"
 
 
    while(1){
@@ -244,16 +276,16 @@ void Wissensbereiche::listAll(){
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, 
 	ECPGt_long,&(current_id),(long)1,(long)1,sizeof(long), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EORT);
-#line 132 "Wissensbereiche.pgc"
+#line 151 "Wissensbereiche.pgc"
 
 if (sqlca.sqlcode == ECPG_NOT_FOUND) break;}
-#line 132 "Wissensbereiche.pgc"
+#line 151 "Wissensbereiche.pgc"
 
     printf("%ld\t%s\t%s\n", current_id,name,beschr);
    }
 
     { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "close cur", ECPGt_EOIT, ECPGt_EORT);}
-#line 136 "Wissensbereiche.pgc"
+#line 155 "Wissensbereiche.pgc"
 
 }
 

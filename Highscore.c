@@ -103,6 +103,7 @@ void Highscore::update(int temp_id){
 
 
     if (read(temp_id)){
+         cout << "<Enter> für das Beibehalten der alten Werte" << endl;
         cout << "Geben Sie den neuen Namen ein: "<< endl;
         getline(cin,new_name);
 
@@ -112,7 +113,6 @@ void Highscore::update(int temp_id){
         getline(cin, temp_score);
         istringstream ss(temp_score);
         ss >> new_score;
-
 
         /* exec sql begin declare section */
          
@@ -134,27 +134,29 @@ void Highscore::update(int temp_id){
         sql_new_name = new_name.c_str();
         sql_new_score = new_score;
 
+
          if(new_name != ""){
             { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "update highscore set h_name = $1  where h_id = $2 ", 
 	ECPGt_char,&(sql_new_name),(long)0,(long)1,(1)*sizeof(char), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, 
 	ECPGt_int,&(sql_id),(long)1,(long)1,sizeof(int), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EOIT, ECPGt_EORT);}
-#line 75 "Highscore.pgc"
+#line 76 "Highscore.pgc"
 
         }
-        if (new_score){
-            { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "update score set score = $1  where h_id = $2 ", 
+        if (temp_score != ""){
+
+            { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "update highscore set score = $1  where h_id = $2 ", 
 	ECPGt_long,&(sql_new_score),(long)1,(long)1,sizeof(long), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, 
 	ECPGt_int,&(sql_id),(long)1,(long)1,sizeof(int), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EOIT, ECPGt_EORT);}
-#line 78 "Highscore.pgc"
+#line 80 "Highscore.pgc"
 
         }
 
         { ECPGtrans(__LINE__, NULL, "commit");}
-#line 81 "Highscore.pgc"
+#line 83 "Highscore.pgc"
 
     }
 };
@@ -180,20 +182,20 @@ void Highscore::entfernen(){
               /* exec sql begin declare section */
                      
               
-#line 104 "Highscore.pgc"
+#line 106 "Highscore.pgc"
  int del_id ;
 /* exec sql end declare section */
-#line 105 "Highscore.pgc"
+#line 107 "Highscore.pgc"
 
               del_id = id;
 
               { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "delete from highscore where h_id = $1 ", 
 	ECPGt_int,&(del_id),(long)1,(long)1,sizeof(int), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EOIT, ECPGt_EORT);}
-#line 108 "Highscore.pgc"
+#line 110 "Highscore.pgc"
 
               { ECPGtrans(__LINE__, NULL, "commit");}
-#line 109 "Highscore.pgc"
+#line 111 "Highscore.pgc"
 
             }
         }
@@ -209,32 +211,32 @@ void Highscore::listAll(){
 		 
 		 
 	
-#line 119 "Highscore.pgc"
+#line 121 "Highscore.pgc"
  char h_name [ 256 ] ;
  
-#line 120 "Highscore.pgc"
+#line 122 "Highscore.pgc"
  long score ;
  
-#line 121 "Highscore.pgc"
+#line 123 "Highscore.pgc"
  long current_id ;
  
-#line 122 "Highscore.pgc"
+#line 124 "Highscore.pgc"
  int counter ;
 /* exec sql end declare section */
-#line 123 "Highscore.pgc"
+#line 125 "Highscore.pgc"
 
-    cout << "ID\tName\tHighscore\n"<<endl;
+    cout << "ID\tPunkte\tName\n"<<endl;
 
 
     //select all wissensbereiche
-    /* declare cur cursor for select h_name , score , h_id from highscore order by h_id */
-#line 128 "Highscore.pgc"
+    /* declare cur cursor for select h_name , score , h_id from highscore order by score desc */
+#line 130 "Highscore.pgc"
 
-    { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "declare cur cursor for select h_name , score , h_id from highscore order by h_id", ECPGt_EOIT, ECPGt_EORT);}
-#line 129 "Highscore.pgc"
+    { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "declare cur cursor for select h_name , score , h_id from highscore order by score desc", ECPGt_EOIT, ECPGt_EORT);}
+#line 131 "Highscore.pgc"
 
     /* exec sql whenever not found  break ; */
-#line 130 "Highscore.pgc"
+#line 132 "Highscore.pgc"
 
 
    while(1){
@@ -245,22 +247,21 @@ void Highscore::listAll(){
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, 
 	ECPGt_long,&(current_id),(long)1,(long)1,sizeof(long), 
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EORT);
-#line 133 "Highscore.pgc"
+#line 135 "Highscore.pgc"
 
 if (sqlca.sqlcode == ECPG_NOT_FOUND) break;}
-#line 133 "Highscore.pgc"
+#line 135 "Highscore.pgc"
 
-    printf("%ld\t%s\t%ld\n", current_id,h_name,score);
+    printf("%ld\t%ld\t%s\n", current_id,score, h_name);
    }
 
     { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "close cur", ECPGt_EOIT, ECPGt_EORT);}
-#line 137 "Highscore.pgc"
+#line 139 "Highscore.pgc"
 
 }
 
 void Highscore::menu(){
     string antwort_h = "1";
-
 
     while (antwort_h[0] != '0'){
         listAll();
