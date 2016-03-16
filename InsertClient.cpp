@@ -39,16 +39,19 @@ Highscore hs;
 	while (antwort[0] != '0'){
 		cout << "Welche Tabelle wollen Sie bearbeiten?\n\n 1: Wissensbereiche\n 2: Fragen\n 3: Highscore\n 0: Beenden" << endl;
 		getline(cin,antwort);
-
-		switch (antwort[0]){
-		case '0': cout << "Programm wird beendet" << endl;break;
-		case '1': cout << "Wissensbereiche werden geladen...\n" << endl;
-                wb.menu(); break;
-		case '2': cout << "Fragen werden geladen..." << endl;  antwort = '1';
-                fr.menu(); break;
-		case '3': cout << "Highscore wird geladen..." << endl;  antwort = '1';
-                hs.menu(); break;
-		default: cout << "Fehler: falsche Eingabe. Bitte erneut eingeben!" << endl;  antwort = '1';
+        if(antwort.length() < 2){
+            switch (antwort[0]){
+            case '0': cout << "Programm wird beendet" << endl;break;
+            case '1': cout << "Wissensbereiche werden geladen...\n" << endl;
+                    wb.menu(); break;
+            case '2': cout << "Fragen werden geladen..." << endl;  antwort = '1';
+                    fr.menu(); break;
+            case '3': cout << "Highscore wird geladen..." << endl;  antwort = '1';
+                    hs.menu(); break;
+            default: cout << "Fehler: falsche Eingabe. Bitte erneut eingeben!" << endl;  antwort = '1';
+            }
+		} else {
+            cout << "Fehlerhafte Eingabe!" << endl;
 		}
 	}
 }

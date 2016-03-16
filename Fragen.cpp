@@ -155,13 +155,23 @@ void Fragen::entfernen(){
 };
 
 void Fragen::listAll(){
+ struct frage {         /* deklariert den Strukturtyp person */
+    int id;
+    char wb[256];
+    char frage[256];
+  };
+
+  string temp = "";
+  int anz_fragen = 20;
+
+
+  frage fragen[1000];
 
 	EXEC SQL BEGIN DECLARE SECTION;
 		char fr[256];
 		char a_f3[256];
 		char wb[256];
 		long current_id;
-		int counter;
 	EXEC SQL END DECLARE SECTION;
     cout << "Wissensbereich\tID\tFrage\n"<<endl;
 
@@ -169,15 +179,33 @@ void Fragen::listAll(){
     //select all Fragen
     EXEC SQL DECLARE cur CURSOR FOR SELECT w.w_name, f.f_id, f.frage FROM fragen f, wissensbereich w WHERE w.w_id = f.w_id ORDER BY w.w_name, f.f_id;
     EXEC SQL OPEN cur;
-    EXEC SQL WHENEVER NOT FOUND DO BREAK;
+    EXEC SQL WHENEVER NOT FOUND CALL setEnd(1);
 
+    setEnd(false);
    while(1){
-    EXEC SQL FETCH IN cur INTO :wb, :current_id, :fr;
-    printf("%s\t%ld\t%s\n", wb, current_id, fr);
+
+    //printf("%s\t%ld\t%s\n", wb, current_id, fr);
+    for(int i = 0; i<anz_fragen; i++){
+        EXEC SQL FETCH IN cur INTO :wb, :current_id, :fr;
+        if(!getEnd()){
+            printf("%s\t%ld\t%s\n", wb, current_id, fr);
+        }
+
+       // fragen[counter].id=current_id;
+       // fragen[counter].wb=wb;
+    //fragen[counter].frage=fr;
+    }
+    if(getEnd()){
+        break;
+    }
+    cout << "\n<Enter>\tWeitere Fragen\n(0)\tZur Auswahl" << endl;
+    getline(cin, temp);
+    if(temp == "0"){
+        break;
+    }
    }
 
     EXEC SQL CLOSE cur;
-
 }
 
 void Fragen::menu(){
@@ -185,7 +213,7 @@ void Fragen::menu(){
 
 
     while (antwort_fr[0] != '0'){
-        listAll();
+        //listAll();
         cout << "\n\nWelche Aktion wollen Sie durchfuehren?\n(1)\tNeue Frage eintragen\n(2)\tFrage bearbeiten\n(3)\tFrage entfernen\n(4)\tFrage anzeigen\n(0)\tBeenden\n\n" <<endl;
         getline(cin,antwort_fr);
 
@@ -276,8 +304,14 @@ void Fragen::anzeigen(){
         if(antwort_up[0] == '0') {
             break;
         }
-        istringstream ss(antwort_up);
-        ss >> id;
-        read(id);
+
+        if(antwort_up == ""){
+            cout << "Fehlerhafte Eingabe" << endl;
+        } else{
+            istringstream ss(antwort_up);
+            ss >> id;
+            read(id);
+        }
+
     }
 }

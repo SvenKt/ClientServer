@@ -19,6 +19,11 @@ public:
 	void update(int temp_id);
 	void entfernen();
 	void anzeigen();
+	void setEnd(bool a){ended=a;}
+	bool getEnd(){return ended;}
+
+private:
+    bool ended;
 
 };
 

@@ -74,7 +74,7 @@ void Highscore::update(int temp_id){
          if(new_name != ""){
             EXEC SQL UPDATE highscore SET h_name = :sql_new_name WHERE h_id = :sql_id;
         }
-        if (new_score >= 0){
+        if (temp_score != ""){
 
             EXEC SQL UPDATE highscore SET score = :sql_new_score WHERE h_id = :sql_id;
         }
@@ -122,17 +122,17 @@ void Highscore::listAll(){
 		long current_id;
 		int counter;
 	EXEC SQL END DECLARE SECTION;
-    cout << "ID\tName\tHighscore\n"<<endl;
+    cout << "ID\tPunkte\tName\n"<<endl;
 
 
     //select all wissensbereiche
-    EXEC SQL DECLARE cur CURSOR FOR SELECT h_name, score, h_id FROM highscore ORDER BY h_id;
+    EXEC SQL DECLARE cur CURSOR FOR SELECT h_name, score, h_id FROM highscore ORDER BY score DESC;
     EXEC SQL OPEN cur;
     EXEC SQL WHENEVER NOT FOUND DO BREAK;
 
    while(1){
     EXEC SQL FETCH IN cur INTO :h_name, :score, :current_id;
-    printf("%ld\t%s\t%ld\n", current_id,h_name,score);
+    printf("%ld\t%ld\t%s\n", current_id,score, h_name);
    }
 
     EXEC SQL CLOSE cur;

@@ -99,13 +99,29 @@ void Wissensbereiche::entfernen(){
             getline(cin, temp);
 
             if(temp == "1"){
+
+
+
               EXEC SQL BEGIN DECLARE SECTION;
                     int del_id;
+                    int anzahl;
               EXEC SQL END DECLARE SECTION;
               del_id = id;
 
+              EXEC SQL SELECT COUNT(f_id) into :anzahl FROM fragen WHERE w_id=:del_id;
 
-              EXEC SQL DELETE FROM fragen WHERE w_id = :del_id;
+             if(anzahl > 0) {
+              cout << "Es befinden sich noch " << anzahl << " Fragen in diesem Wissensbereich. Diese werden auch entfernt. Fortfahren?\n(1)\tJa\n(0)\tNein" << endl;
+             getline(cin, temp);
+
+                if(temp == "1"){
+                    EXEC SQL DELETE FROM fragen WHERE w_id = :del_id;
+                } else {
+                    break;
+                }
+
+             }
+
               EXEC SQL DELETE FROM wissensbereich WHERE w_id=:del_id;
               EXEC SQL COMMIT;
             }
