@@ -36,8 +36,8 @@ Highscore hs;
    //sample code result
    // printf("%s\n",name);
 	string antwort = "1";
-	while (antwort[0] != '0'){
-		cout << "Welche Tabelle wollen Sie bearbeiten?\n\n 1: Wissensbereiche\n 2: Fragen\n 3: Highscore\n 0: Beenden" << endl;
+	while (antwort != "0"){
+		cout << "Welche Tabelle wollen Sie bearbeiten?\n\n 1: Wissensbereiche\n 2: Fragen\n 3: Highscore\n 0: Programm beenden" << endl;
 		getline(cin,antwort);
         if(antwort.length() < 2){
             switch (antwort[0]){
